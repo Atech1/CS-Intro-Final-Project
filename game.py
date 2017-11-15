@@ -1,4 +1,4 @@
-# Alexander Ross (asr3bj) and Tilden (), program.py
+# Alexander Ross (asr3bj) and Tilden (tw8rt), program.py
 # this was created Nov, 2017
 import UI
 import gamebox
