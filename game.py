@@ -15,9 +15,9 @@ def main():
 
 def play(keys):
     global camera
-    UI.check_mouse(camera["_base_"])
-    camera["_base_"].clear("white")
-    UI.drawing(camera["_base_"])
+    UI.check_mouse(camera)
+    camera.clear("white")
+    UI.drawing(camera)
     return
 
 
