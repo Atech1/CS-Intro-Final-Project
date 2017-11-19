@@ -29,40 +29,62 @@ class Camera(gamebox.Camera):
             self.children.remove(child)
 
 
+class TextObject:
+    def create_boxes(self, text, x, y, color, textDes):
+        all_boxes = []
+        print(text.split("\n"))
+        for i in range(len(text.split("\n")) - 1):
+            line = text.split("\n")[i]
+            print(line, i)
+            all_boxes.append(gamebox.from_text(x, y + 20 * i, line,
+                                               textDes['font'], textDes['size'], color))
+        return all_boxes
+
+    def __init__(self, text, x, y, color = "black", textDes = None, image = None):
+        self.boxes = list()
+        self.text = text
+        self.width = x
+        self.height = y
+        self.textDes = textDes
+
+    def contains(self, x, y):
+        for box in self.boxes:
+            if box.contains(x, y):
+                return True
+            else:
+                return False
+
+    def move(self, x, y):
+        for box in self.boxes:
+            box.move(x, y)
+        return
+
+    def add_to_draw(self):
+        for box in self.boxes:
+            Draw_Objects.append(box)
 
 
-def Button(x, y, width, height, text, color = "black", textObj = None, image = None):  # auto generated
-    instance_Button = dict()
-    instance_Button['_base_'] = gamebox.from_text(x, y, text, textObj['font'],
-                                                  textObj['size'], color)
-    if image is not None: instance_Button['_base_'] = gamebox.from_image
-    instance_Button['x'] = x
-    instance_Button['y'] = y
-    instance_Button['width'] = width
-    instance_Button['height'] = height
-    instance_Button['textObj'] = textObj
-    instance_Button['functions'] = dict()
-    UI_Elements.append(instance_Button)
-    Draw_Objects.append(instance_Button["_base_"])
+class Button(TextObject):
+    def __init__(self, x, y, text, color = "black", textDes = None, image = None):  # auto generated
+        TextObject.__init__(self, text, x, y, color, textDes)
+        self.boxes = self.create_boxes(self.text, self.width, self.height, color, textDes)
+        UI_Elements.append(self)
+        self.add_to_draw()
 
-    def On_Click(self = instance_Button):
+    def On_Click(self):
         print("click")
         return
 
-    def Hover(self = instance_Button):
-        self["_base_"].color = "gray"
+    def Hover(self):
+
         return
 
-    def Mouse_Check(x, y, self = instance_Button):
-        if self['_base_'].contains(x, y):
-            Hover()
+    def Mouse_Check(self, x, y):
+        if self.contains(x, y):
+            self.Hover()
         return
 
-    instance_Button['functions']['On_Click'] = On_Click
-    instance_Button['functions']['Hover'] = Hover
-    instance_Button['functions']['Mouse_Check'] = Mouse_Check
-    UI_Elements.append(instance_Button)
-    return instance_Button
+
 
 
 def TextDescriptor(font = 'arial', text = "", size = 20, bold = False, italic = False):  # auto generated
@@ -91,8 +113,8 @@ def check_controls(keys):
 def check_mouse(camera):
     x, y = camera.mouse
     for element in UI_Elements:
-        if "Mouse_Check" in element['functions']:
-            element["functions"]["Mouse_Check"](x, y)
+        if getattr(element, "Mouse_Check", False):
+            element.Mouse_Check(x, y)
             if camera.mouseclick:
-                element['functions']['On_Click']()
+                element.On_Click()
     return

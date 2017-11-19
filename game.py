@@ -9,7 +9,7 @@ camera = None
 def main():
     global camera
     camera = UI.Camera(600, 600, "white")
-    UI.Button(300, 300, 100, 100, "Hi There", "black", UI.TextDescriptor())
+    UI.Button(300, 300, "Hi There \n this is good \n hooo \n", "black", UI.TextDescriptor())
     gamebox.timer_loop(10, play)
 
 
