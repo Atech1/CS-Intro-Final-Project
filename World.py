@@ -1,4 +1,4 @@
-# Alexander Ross (asr3bj), World.py
+# Alexander Ross (asr3bj) and Tilden (tw8rt), World.py
 # this was created Nov, 2017
 
 Levels = []
