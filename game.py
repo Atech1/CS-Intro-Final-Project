@@ -2,10 +2,11 @@
 # this was created Nov, 2017
 
 import UI
-import World
 import gamebox
+from World import World
 
 camera = None
+
 
 def main():
     global camera
@@ -16,6 +17,7 @@ def main():
     world.World_Gen(1)
     gamebox.timer_loop(10, play)
     return
+
 
 def play(keys):
     global camera
