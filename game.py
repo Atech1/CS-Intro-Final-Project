@@ -2,6 +2,7 @@
 # this was created Nov, 2017
 
 import UI
+import World
 import gamebox
 
 camera = None
@@ -11,9 +12,10 @@ def main():
     camera = UI.Camera(600, 600, "white")
     tile = UI.tileate()
     UI.Button(300, 300, "Hi There \n this is good \n hooo \n", "black", UI.TextDescriptor())
-
+    world = World(5)
+    world.World_Gen(1)
     gamebox.timer_loop(10, play)
-
+    return
 
 def play(keys):
     global camera
