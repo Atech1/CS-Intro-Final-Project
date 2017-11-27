@@ -1,6 +1,8 @@
 # Alexander Ross (asr3bj) and Tilden (tw8rt), World.py
 # this was created Nov, 2017
 
+import Controllers
+import Units
 
 # this will be part of the model only
 class Tile(object):
@@ -14,6 +16,8 @@ class Tile(object):
         return
 
 
+# TODO: make levels create Tile Controllers and create the actual tiles in the constructor for them.
+# TODO: or just make a world controller that will handle all of that....
 class Level(object):
     def __init__(self, x_size: int, y_size: int, enemies: int, treasure: int):
         self.width = x_size
@@ -48,6 +52,7 @@ class World(object):
             level = Level(100, 100, 0, 0)
             level.level_gen()
             self.levels.append(level)
+        self.player = Controllers.PlayerController(Units.Player(None, 10), None)
         return
 
 

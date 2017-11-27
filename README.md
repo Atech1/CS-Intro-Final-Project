@@ -21,4 +21,4 @@ things for next time:
 
     - looks like this game will be implemented turn based????
 
-    - more things to ask Tilden. 
+    - more things to ask Tilden.
