@@ -7,7 +7,7 @@ import pygame
 import gamebox
 
 cam = None
-Draw_Layers = {"Background": [], "game_objects": [], "UI": []}
+Draw_Layers = {"Background": [], "game_objects": [], "player": [], "UI": []}
 UI_Elements = []
 Controls = []
 colors = ["red", "green", "yellow", "blue", "purple", "cyan", "brown"]
@@ -39,11 +39,11 @@ class Camera(gamebox.Camera):
             self.children.remove(child)
 
     def controls(self, keys):
-        if pygame.K_UP in keys:
+        if pygame.K_UP in keys and self.y > 25:
             self.move(0, -10)
         elif pygame.K_DOWN in keys:
             self.move(0, 10)
-        elif pygame.K_LEFT in keys:
+        elif pygame.K_LEFT in keys and self.x > 25:
             self.move(-10, 0)
         elif pygame.K_RIGHT in keys:
             self.move(10, 0)
@@ -89,14 +89,16 @@ class Button(TextObject):
     def __init__(self, x, y, text, color = "black", textDes = None, image = None):  # auto generated
         TextObject.__init__(self, text, x, y, color, textDes)
         self.boxes = self.create_boxes(self.text, self.width, self.height, color, textDes)
+        UI_Elements.append(self)
         self.add_drawing()
 
-    def On_Click(self):
-        print("click")
+    def On_Click(self, x, y):
+        if self.contains(x, y):
+            print("\n click \n")
         return
 
     def Hover(self):
-
+        print("hover")
         return
 
     def Mouse_Check(self, x, y):
@@ -109,9 +111,9 @@ class ScreenUnit(gamebox.SpriteBox):
     def __init__(self, x, y, image, width, height, is_centered = False):
         gamebox.SpriteBox.__init__(self, x, y, image, "white", width, height)
         if is_centered is True:
-            add_to_draw(self, "game_objects", True)
+            add_to_draw(self, "player", True)
         else:
-            add_to_draw(self, "game_objects")
+            add_to_draw(self, "player")
 
 
 def TextDescriptor(font = 'arial', text = "", size = 20, bold = False, italic = False):  # auto generated
@@ -140,14 +142,11 @@ def check_controls(keys):
 
 def check_mouse(camera):
     x, y = camera.mouse
-    for element in Draw_Layers["UI"]:
-        try:
+    for element in UI_Elements:
             if getattr(element, "Mouse_Check", False):
                 element.Mouse_Check(x, y)
                 if camera.mouseclick:
-                    element.On_Click()
-        except Exception:  # this is needed because gamebox.py is broken. It is not following standard practice
-            # to allow getattr() to work in a pythonic way.
+                    element.On_Click(x, y)
             continue
     return
 
@@ -170,6 +169,19 @@ def tileate():
     return tiles
 
 
+def tiling(tiles, tile_width, tile_height):
+    width = cam.width // tile_width  # or tile width
+    height = cam.height // tile_height
+    for i in range(0, len(tiles)):
+        for j in range(0, len(tiles[i])):
+            if tiles[i][j].walkable:
+                thing = gamebox.from_color(i * tile_width + tile_width // 2, j * tile_height + tile_height // 2,
+                                           "yellow", tile_width, tile_height)
+            else:
+                thing = gamebox.from_color(i * tile_width + tile_width // 2, j * tile_height + tile_height // 2, "red",
+                                           tile_width, tile_height)
+            Draw_Layers["game_objects"].append(thing)
+    return
 def rand_color():
     return colors[random.randint(0, len(colors) - 1)]
 

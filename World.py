@@ -1,9 +1,7 @@
 # Alexander Ross (asr3bj) and Tilden (tw8rt), World.py
 # this was created Nov, 2017
 
-import Controllers
-import Units
-
+import random
 # this will be part of the model only
 class Tile(object):
     def __init__(self, x: int, y: int, passable: bool = True):
@@ -24,13 +22,19 @@ class Level(object):
         self.height = y_size
         self.enemies = []  # gen from the number passed as parem enemies
         self.tiles = []
+        self.rand_start_tile = None
 
     def level_gen(self):
         for i in range(self.width):
             column = []
             for j in range(self.height):
-                column.append(Tile(i, j, True))
+                num = random.randint(0, 10)
+                if num > 4:
+                    column.append(Tile(i, j, True))
+                else:
+                    column.append(Tile(i, j, False))
             self.tiles.append(column)
+        self.rand_start_tile = self.tiles[6][9]
         return
 
     def find_tile(self, x, y):
@@ -39,21 +43,35 @@ class Level(object):
         else:
             raise AttributeError
 
+    def all_tiles(self):
+        big_list_of_tiles = []
+        for column in self.tiles:
+            for tile in column:
+                big_list_of_tiles.append(tile)
+        return big_list_of_tiles
+
 
 class World(object):
-    def __init__(self, num_of_levels: int):
+    def __init__(self, num_of_levels: int, difficulty: float = 0.0, player = None):
         self.levels = []
-        self.player = None  # this should soon gen a player later.
-        self.current_level = 0
+        self.player = player  # this should soon gen a player later.
+        self.current_level = None
         pass
 
     def World_Gen(self, num_of_levels: int):
         for i in range(num_of_levels):
-            level = Level(100, 100, 0, 0)
+            level = Level(20, 20, 0, 0)
             level.level_gen()
             self.levels.append(level)
-        self.player = Controllers.PlayerController(Units.Player(None, 10), None)
+        self.current_level = self.levels.pop(0)
         return
+
+    def next_level(self):
+        if len(self.levels) > 0:
+            self.current_level = self.levels.pop(0)
+            return True
+        else:
+            return False  # TODO: maybe gen more world or maybe switch state of the game to done.
 
 
 """
