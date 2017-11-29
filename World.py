@@ -4,10 +4,12 @@
 import random
 # this will be part of the model only
 class Tile(object):
-    def __init__(self, x: int, y: int, passable: bool = True):
-        self.x = x
-        self.y = y
+    def __init__(self, x: int, y: int, unit: int, passable: bool = True):
+        self.id_x = x
+        self.id_y = y
         self.walkable = passable
+        self.world_x = (unit * self.id_x) + unit // 2
+        self.world_y = (unit * self.id_y) + unit // 2
         self.nearby = None
 
     def nearby_tiles(self):
@@ -24,17 +26,17 @@ class Level(object):
         self.tiles = []
         self.rand_start_tile = None
 
-    def level_gen(self):
+    def level_gen(self, world_unit):
         for i in range(self.width):
             column = []
             for j in range(self.height):
                 num = random.randint(0, 10)
                 if num > 4:
-                    column.append(Tile(i, j, True))
+                    column.append(Tile(i, j, world_unit, True))
                 else:
-                    column.append(Tile(i, j, False))
+                    column.append(Tile(i, j, world_unit, False))
             self.tiles.append(column)
-        self.rand_start_tile = self.tiles[6][9]
+        self.rand_start_tile = self.tiles[num][5]
         return
 
     def find_tile(self, x, y):
@@ -52,16 +54,17 @@ class Level(object):
 
 
 class World(object):
-    def __init__(self, num_of_levels: int, difficulty: float = 0.0, player = None):
+    def __init__(self, num_of_levels: int, world_unit: int, difficulty: float = 0.0, player = None):
         self.levels = []
         self.player = player  # this should soon gen a player later.
         self.current_level = None
+        self.world_unit = world_unit
         pass
 
     def World_Gen(self, num_of_levels: int):
         for i in range(num_of_levels):
             level = Level(20, 20, 0, 0)
-            level.level_gen()
+            level.level_gen(self.world_unit)
             self.levels.append(level)
         self.current_level = self.levels.pop(0)
         return

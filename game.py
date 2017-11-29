@@ -11,8 +11,6 @@ camera = None
 def main():
     global camera
     camera = UI.Camera(600, 600, "white")
-    #    tile = UI.tileate()
-    #    UI.Button(300, 300, "Hi There \n this is good \n hooo \n", "black", UI.TextDescriptor())
     world = WorldController()
     gamebox.timer_loop(10, play)
     return

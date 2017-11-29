@@ -1,6 +1,5 @@
 # Alexander Ross (asr3bj) and Tilden (tw8rt), UI.py
 # this was created Nov, 2017
-import random
 
 import pygame
 
@@ -47,6 +46,13 @@ class Camera(gamebox.Camera):
             self.move(-10, 0)
         elif pygame.K_RIGHT in keys:
             self.move(10, 0)
+
+    def center_on(self, obj):
+        self.x = obj.x
+        self.y = obj.y
+        for child in self.children:
+            child.x = obj.x
+            child.y = obj.y
 
 
 class TextObject:
@@ -109,14 +115,14 @@ class Button(TextObject):
 
 class ScreenUnit(gamebox.SpriteBox):
     def __init__(self, x, y, image, width, height, is_centered = False):
-        gamebox.SpriteBox.__init__(self, x, y, image, "white", width, height)
+        gamebox.SpriteBox.__init__(self, x, y, image, "black", width, height)
         if is_centered is True:
             add_to_draw(self, "player", True)
         else:
             add_to_draw(self, "player")
 
 
-def TextDescriptor(font = 'arial', text = "", size = 20, bold = False, italic = False):  # auto generated
+def text_descriptor(font = 'arial', text = "", size = 20, bold = False, italic = False):  # auto generated
     instance_TextDescriptor = dict()
     instance_TextDescriptor['font'] = font
     instance_TextDescriptor['text'] = text
@@ -153,37 +159,6 @@ def check_mouse(camera):
 
 def add_control(control):
     Controls.append(control)
-
-
-def tileate():
-    width = cam.width // 50  # or tile width
-    height = cam.height // 50
-    tiles = []
-    for i in range(0, width * 2):
-        row = []
-        for j in range(0, height * 2):
-            thing = gamebox.from_color(i * 50 + 25, j * 50 + 25, rand_color(), 50, 50)
-            Draw_Layers["game_objects"].append(thing)
-            row.append(thing)
-    tiles.append(row)
-    return tiles
-
-
-def tiling(tiles, tile_width, tile_height):
-    width = cam.width // tile_width  # or tile width
-    height = cam.height // tile_height
-    for i in range(0, len(tiles)):
-        for j in range(0, len(tiles[i])):
-            if tiles[i][j].walkable:
-                thing = gamebox.from_color(i * tile_width + tile_width // 2, j * tile_height + tile_height // 2,
-                                           "yellow", tile_width, tile_height)
-            else:
-                thing = gamebox.from_color(i * tile_width + tile_width // 2, j * tile_height + tile_height // 2, "red",
-                                           tile_width, tile_height)
-            Draw_Layers["game_objects"].append(thing)
-    return
-def rand_color():
-    return colors[random.randint(0, len(colors) - 1)]
 
 
 def add_to_draw(obj, layer, center = False):
