@@ -1,5 +1,5 @@
 # Tilden Winston (tw8rt) Alec Ross(asr3bj) Writes debug info, records high scores
-
+# Not functional yet. Based on code from class demonstration
 
 if os.path.exists("scores.txt"):
     with open("scores.txt", "r") as source_file_object:
