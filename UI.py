@@ -40,11 +40,11 @@ class Camera(gamebox.Camera):
     def controls(self, keys):
         if pygame.K_UP in keys and self.y > 25:
             self.move(0, -10)
-        elif pygame.K_DOWN in keys:
+        elif pygame.K_DOWN in keys and self.y < 1000:
             self.move(0, 10)
         elif pygame.K_LEFT in keys and self.x > 25:
             self.move(-10, 0)
-        elif pygame.K_RIGHT in keys:
+        elif pygame.K_RIGHT in keys and self.x < 1000:
             self.move(10, 0)
 
     def center_on(self, obj):
@@ -90,17 +90,23 @@ class TextObject:
         for box in self.boxes:
             add_to_draw(box, "UI", True)
 
+    def remove_draw(self):
+        for box in self.boxes:
+            remove_from_draw(box, "UI", True)
 
 class Button(TextObject):
-    def __init__(self, x, y, text, color = "black", textDes = None, image = None):  # auto generated
+    def __init__(self, x, y, text, color = "black", textDes = None, image = None,
+                 click_callback = None):  # auto generated
         TextObject.__init__(self, text, x, y, color, textDes)
         self.boxes = self.create_boxes(self.text, self.width, self.height, color, textDes)
+        self.click_call = click_callback
         UI_Elements.append(self)
         self.add_drawing()
 
     def On_Click(self, x, y):
         if self.contains(x, y):
             print("\n click \n")
+            self.click_call()
         return
 
     def Hover(self):
@@ -112,8 +118,12 @@ class Button(TextObject):
             self.Hover()
         return
 
+    def __del__(self):
+        self.remove_draw()
+        UI_Elements.remove(self)
 
-class ScreenUnit(gamebox.SpriteBox):
+
+class ScreenUnit(gamebox.SpriteBox):  # TODO: make this not centered on the camera to move indepentdently
     def __init__(self, x, y, image, width, height, is_centered = False):
         gamebox.SpriteBox.__init__(self, x, y, image, "black", width, height)
         if is_centered is True:
@@ -165,3 +175,20 @@ def add_to_draw(obj, layer, center = False):
     Draw_Layers[layer].append(obj)
     if center is True and cam is not None:
         cam.add_child(obj)
+
+
+def remove_from_draw(obj, layer, center = False):
+    if obj in Draw_Layers[layer]:
+        Draw_Layers[layer].remove(obj)
+        if center is True and cam is not None:
+            cam.remove_child(obj)
+        return
+
+
+# else:
+#        raise Exception("{} is not in draw".format(obj))
+
+
+def clear_draw():
+    for key in Draw_Layers:
+        Draw_Layers[key] = []
