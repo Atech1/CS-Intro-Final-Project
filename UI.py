@@ -1,8 +1,6 @@
 # Alexander Ross (asr3bj) and Tilden (tw8rt), UI.py
 # this was created Nov, 2017
 
-import pygame
-
 import gamebox
 
 cam = None
@@ -13,13 +11,16 @@ colors = ["red", "green", "yellow", "blue", "purple", "cyan", "brown"]
 
 
 class Camera(gamebox.Camera):
-    def __init__(self, width, height, full_screen = False, children = []):
+    def __init__(self, width, height, full_screen = False, children = [], controller = None):
         gamebox.Camera.__init__(self, width, height, False)
         self.view = gamebox.from_color(width / 2, height / 2, "white", width, height)
         self.children = children
+        self.controller = controller
+        if controller is None:
+            raise Exception("YOU HAVE TO CREATE A CAMERA WITH A CONTROLLER!!!!!!!!!!")
         global cam
         cam = self
-        add_control(self.controls)
+        add_control(self.controller.controls)
 
     def move(self, x, y = None):
         if y is None: x, y = x
@@ -36,16 +37,6 @@ class Camera(gamebox.Camera):
     def remove_child(self, child):
         if child in self.children:
             self.children.remove(child)
-
-    def controls(self, keys):
-        if pygame.K_UP in keys and self.y > 25:
-            self.move(0, -10)
-        elif pygame.K_DOWN in keys and self.y < 1000:
-            self.move(0, 10)
-        elif pygame.K_LEFT in keys and self.x > 25:
-            self.move(-10, 0)
-        elif pygame.K_RIGHT in keys and self.x < 1000:
-            self.move(10, 0)
 
     def center_on(self, obj):
         self.x = obj.x
@@ -94,6 +85,7 @@ class TextObject:
         for box in self.boxes:
             remove_from_draw(box, "UI", True)
 
+
 class Button(TextObject):
     def __init__(self, x, y, text, color = "black", textDes = None, image = None,
                  click_callback = None):  # auto generated
@@ -118,18 +110,20 @@ class Button(TextObject):
             self.Hover()
         return
 
-    def __del__(self):
+    def deactivate(self):
         self.remove_draw()
         UI_Elements.remove(self)
 
 
 class ScreenUnit(gamebox.SpriteBox):  # TODO: make this not centered on the camera to move indepentdently
-    def __init__(self, x, y, image, width, height, is_centered = False):
+    def __init__(self, x, y, image, width, height, is_centered = False, controls = None):
         gamebox.SpriteBox.__init__(self, x, y, image, "black", width, height)
         if is_centered is True:
             add_to_draw(self, "player", True)
         else:
             add_to_draw(self, "player")
+        if controls is not None:
+            add_control(controls)
 
 
 def text_descriptor(font = 'arial', text = "", size = 20, bold = False, italic = False):  # auto generated
@@ -140,31 +134,6 @@ def text_descriptor(font = 'arial', text = "", size = 20, bold = False, italic =
     instance_TextDescriptor['bold'] = bold
     instance_TextDescriptor['italic'] = italic
     return instance_TextDescriptor
-
-
-def drawing(camera):
-    for key in Draw_Layers.keys():
-        for item in Draw_Layers[key]:
-            camera.draw(item)
-    camera.display()
-    return
-
-
-def check_controls(keys):
-    for control in Controls:
-        control(keys)
-    return
-
-
-def check_mouse(camera):
-    x, y = camera.mouse
-    for element in UI_Elements:
-            if getattr(element, "Mouse_Check", False):
-                element.Mouse_Check(x, y)
-                if camera.mouseclick:
-                    element.On_Click(x, y)
-            continue
-    return
 
 
 def add_control(control):
@@ -185,10 +154,31 @@ def remove_from_draw(obj, layer, center = False):
         return
 
 
-# else:
-#        raise Exception("{} is not in draw".format(obj))
-
-
 def clear_draw():
     for key in Draw_Layers:
         Draw_Layers[key] = []
+
+
+def check_mouse(camera):
+    x, y = camera.mouse
+    for element in UI_Elements:
+        if getattr(element, "Mouse_Check", False):
+            element.Mouse_Check(x, y)
+            if camera.mouseclick:
+                element.On_Click(x, y)
+        continue
+    return
+
+
+def check_controls(keys):
+    for control in Controls:
+        control(keys)
+    return
+
+
+def drawing(camera):
+    for key in Draw_Layers.keys():
+        for item in Draw_Layers[key]:
+            camera.draw(item)
+    camera.display()
+    return

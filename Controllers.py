@@ -1,23 +1,71 @@
 # Alexander Ross (asr3bj) and Tilden (tw8rt), Controllers.py
 # this was created Nov, 2017
 
-from UI import ScreenUnit, add_to_draw
+import pygame
+
+import UI
 from Units import Player
 from World import World
 from gamebox import from_color
 
 
+class CameraController(object):
+    def __init__(self, cam = None, world = None):
+        self.camera = cam
+        if cam is None:
+            self.camera = UI.Camera(600, 600, "white", controller = self)
+        self.world = world
+        if world is None:
+            self.world = WorldController()
+        self.world_unit = self.world.world_unit
+
+    def controls(self, keys):
+        if pygame.K_UP in keys and self.camera.y > self.world_unit:
+            self.move(0, -1)
+        elif pygame.K_DOWN in keys and self.camera.y < self.world_unit * 29:
+            self.move(0, 1)
+        elif pygame.K_LEFT in keys and self.camera.x > self.world_unit:
+            self.move(-1, 0)
+        elif pygame.K_RIGHT in keys and self.camera.x < self.world_unit * 29:
+            self.move(1, 0)
+
+    def move(self, x, y):
+        self.camera.move(x * self.world_unit, y * self.world_unit)
+
+    def clear(self, color = None, image = None):
+        if color is not None:
+            self.camera.clear(color)
+        else:
+            self.camera.clear(image)
+
+
 class PlayerController(object):
-    def __init__(self, player, screenObj = None):
+    def __init__(self, player, screenObj = None, world_unit = None):
+        self.world_unit = world_unit
         self.player = player
         if screenObj is not None:
             self.screen_obj = screenObj
         else:
-            self.screen_obj = ScreenUnit(player.current_tile.world_x, player.current_tile.world_y, None, 15, 15,
-                                         True)
+            self.screen_obj = UI.ScreenUnit(player.current_tile.world_x, player.current_tile.world_y, None, 15, 15,
+                                            False, self.controls)
             from UI import cam
             cam.center_on(self.screen_obj)
             # TODO: fix the functionality of this to actually make some sense and work.
+
+    def move(self, x, y):
+        if self.player.move(x, y):
+            self.screen_obj.move(x * self.world_unit, y * self.world_unit)
+        return
+
+    def controls(self, keys):
+        if pygame.K_w in keys:
+            self.move(0, -1)
+        elif pygame.K_s in keys:
+            self.move(0, 1)
+        elif pygame.K_a in keys:
+            self.move(-1, 0)
+        elif pygame.K_d in keys:
+            self.move(1, 0)
 
 
 class WorldController(object):
@@ -26,21 +74,28 @@ class WorldController(object):
     """
 
     def __init__(self, world = None, player = None, world_unit = 50):
+        self.world_unit = world_unit
         if world is not None:
             self.world = world
             self.current_level_controller = LevelController(self.world.current_level)
         else:
-            self.world = World(5, world_unit, 0.0)
-            self.world.World_Gen(1)
-            self.current_level_controller = LevelController(self.world.current_level)
+            self.world = World(world_unit, 0.0)
 
             if player is not None:
                 self.player = player
                 self.world.player = self.player.player
             else:
-                playerobj = Player(self.world.current_level.rand_start_tile, 4, "George")
-                self.player = PlayerController(playerobj, None)
-                self.world.player = playerobj
+                self.player = player
+
+    def load(self):
+        if self.world.current_level is None:
+            self.world.World_Gen(2)
+            self.current_level_controller = LevelController(self.world.current_level)
+        if self.player is None:
+            playerobj = Player(self.world.current_level.rand_start_tile, 4,
+                               self.current_level_controller.level, "George")
+            self.player = PlayerController(playerobj, None, self.world_unit)
+            self.world.player = playerobj
 
     def next_level_load(self):
         if self.world.next_level():
@@ -65,12 +120,10 @@ class LevelController(object):
         tiles = self.level.tiles
         for i in range(0, len(tiles)):
             for j in range(0, len(tiles[i])):
-                if tiles[i][j].walkable:
-                    #                    box = from_color(tiles[i][j].world_x, tiles[i][j].world_y, "blue", 50, 50)
-                    print("g")
-                else:
+                if not tiles[i][j].walkable:
+                    # box = from_color(tiles[i][j].world_x, tiles[i][j].world_y, "blue", 50, 50)
                     box = from_color(tiles[i][j].world_x, tiles[i][j].world_y, "red", 50, 50)
-                    add_to_draw(box, "game_objects", False)
+                    UI.add_to_draw(box, "game_objects", False)
 
 
 """
