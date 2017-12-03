@@ -53,9 +53,13 @@ class PlayerController(object):
             # TODO: fix the functionality of this to actually make some sense and work.
 
     def move(self, x, y):
+        print("called")
         if self.player.move(x, y):
             self.screen_obj.move(x * self.world_unit, y * self.world_unit)
         return
+
+    def lerp(self, point1, point2, scalar):
+        return point1 + (point2 - point1) * scalar
 
     def controls(self, keys):
         if pygame.K_w in keys:
