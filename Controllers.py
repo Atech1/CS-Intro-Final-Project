@@ -93,7 +93,7 @@ class WorldController(object):
 
     def load(self):
         if self.world.current_level is None:
-            self.world.World_Gen(2)
+            self.world.world_gen(2)
             self.current_level_controller = LevelController(self.world.current_level)
         if self.player is None:
             playerobj = Player(self.world.current_level.rand_start_tile, 4,
