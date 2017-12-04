@@ -11,7 +11,9 @@ colors = ["red", "green", "yellow", "blue", "purple", "cyan", "brown"]
 
 
 class Camera(gamebox.Camera):
+    """this extends the gamebox.camera will some useful things that makes it better and easier to use"""
     def __init__(self, width, height, full_screen = False, children = [], controller = None):
+        """subclass constructor"""
         gamebox.Camera.__init__(self, width, height, False)
         self.view = gamebox.from_color(width / 2, height / 2, "white", width, height)
         self.children = children
@@ -23,6 +25,7 @@ class Camera(gamebox.Camera):
         add_control(self.controller.controls)
 
     def move(self, x, y = None):
+        """this is basically the base method that will call all the other move()s"""
         if y is None: x, y = x
         self.x += x
         self.y += y
@@ -32,13 +35,16 @@ class Camera(gamebox.Camera):
                 child.move(x, y)
 
     def add_child(self, child):
+        """this is specifically part of the UI handling to add UI elements that won't change position as things move"""
         self.children.append(child)
 
     def remove_child(self, child):
+        """this removes a child object"""
         if child in self.children:
             self.children.remove(child)
 
     def center_on(self, obj):
+        """this will center the camera on some gameobject"""
         self.x = obj.x
         self.y = obj.y
         for child in self.children:
