@@ -62,25 +62,21 @@ class PlayerController(object):
             # TODO: fix the functionality of this to actually make some sense and work.
 
     def move(self, x, y):
+        """this will move and lerp the player correctly."""
         x_pos = 0
         y_pos = 0
         if x != 0:
             x_pos = lerp(self.player.current_tile.world_x,
-                         self.player.current_tile.world_x + (abs(x) * self.world_unit), 0.5)
+                         self.player.current_tile.world_x + (abs(x) * self.world_unit), 00.5)
         if y != 0:
             y_pos = lerp(self.player.current_tile.world_y,
-                         self.player.current_tile.world_y + (abs(y) * self.world_unit), 0.5)
+                         self.player.current_tile.world_y + (abs(y) * self.world_unit), 00.5)
         if x < 0:
             x_pos = -x_pos
         if y < 0:
             y_pos = -y_pos
-        print(self.player.world_x, self.player.world_y)
-        print(x_pos, y_pos)
         if self.player.move(x_pos, y_pos):
-            print((int(x_pos), int(y_pos)))
             self.screen_obj.move(int(x_pos), int(y_pos))
-        else:
-            print("issues")
 
     def controls(self, keys):
         if pygame.K_w in keys:
@@ -153,7 +149,6 @@ class LevelController(object):
 
 def lerp(point1, point2, scalar):
     """linear interpolation"""
-    print(point1, point2, (point2 - point1) * scalar)
     return (point2 - point1) * scalar
 """
 to solve my problems with tiling, I need to probably have both a "tile order" type system I have now, 1, 2, 3, 4
@@ -161,11 +156,3 @@ to solve my problems with tiling, I need to probably have both a "tile order" ty
  refer to Quill18 creates episode #2. ->  14:55.
  this will fix a lot of the uncleanliness. also add the tiling directly to LevelController for cleanliness. 
 """
-#
-#
-# listy1 = [0, -1, 1]
-# lisyt2 = [0, 1, -1]
-# maping = [0, 25, 50]
-#
-# val = lerp(maping[1], listy1[2] * maping[2], 0.5)/25
-# print(val)

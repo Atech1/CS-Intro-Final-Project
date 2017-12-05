@@ -29,8 +29,6 @@ class Player(PlayableUnit):
     def __init__(self, tile, stats, level, name = "fred"):
         PlayableUnit.__init__(self, tile, stats, level)
         self.name = name
-        self.dx = 0
-        self.dy = 0
         self.world_x = self.current_tile.world_x
         self.world_y = self.current_tile.world_y
 
@@ -40,13 +38,21 @@ class Player(PlayableUnit):
         self.world_y += y
         x_pos = self.world_x // self.current_level.world_unit
         y_pos = self.world_y // self.current_level.world_unit
-        print(x_pos, y_pos, " x y  world // units")
         valid_tile = self.current_level.find_tile(x_pos, y_pos)
         if valid_tile is not None and valid_tile.walkable:
-            print(valid_tile.id_x, valid_tile.id_y, "tile")
             self.current_tile = valid_tile
             return True
         else:
             self.world_x -= x
             self.world_y -= y
             return False
+
+
+class Enemy(PlayableUnit):
+    """This is the Enemy class"""
+
+    def __init__(self, tile, stats, level, name = "monster"):
+        """ Constructor for  """
+        PlayableUnit.__init__(self, tile, stats, level)
+        self.name = name
+        pass
