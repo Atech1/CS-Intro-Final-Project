@@ -17,6 +17,7 @@ def main():
                        "black", UI.text_descriptor(), None, splash_end)
     #    gamebox.timer_loop(30, splash_screen)
     button.deactivate()
+    UI.background()
     camera_controller.world.load()
     gamebox.timer_loop(15, play)
     return
@@ -46,7 +47,7 @@ def Update(camera_update, keys_update):
     :param keys_update: keys to check if ran.
     :return: void
     """
-    camera_controller.clear("gray")
+    camera_controller.clear("white")
     UI.drawing(camera_update)
     UI.check_controls(keys_update)
     UI.check_mouse(camera_update)

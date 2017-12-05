@@ -6,7 +6,7 @@ import pygame
 import UI
 from Units import Player
 from World import World
-from gamebox import from_color
+from gamebox import from_image
 
 
 class CameraController(object):
@@ -142,9 +142,13 @@ class LevelController(object):
         for i in range(0, len(tiles)):
             for j in range(0, len(tiles[i])):
                 if not tiles[i][j].walkable:
-                    # box = from_color(tiles[i][j].world_x, tiles[i][j].world_y, "blue", 50, 50)
-                    box = from_color(tiles[i][j].world_x, tiles[i][j].world_y, "red", 50, 50)
+                    # box = from_color(tiles[i][j].world_x, tiles[i][j].world_y, "red", 50, 50)
+                    box = from_image(tiles[i][j].world_x, tiles[i][j].world_y, "Rock.png")
+                    box.scale_by(0.5)
                     UI.add_to_draw(box, "game_objects", False)
+                else:
+                    box = from_image(tiles[i][j].world_x, tiles[i][j].world_y, "Rock_floor.png")
+                    UI.add_to_draw(box, "Tiles", False)
 
 
 def lerp(point1, point2, scalar):

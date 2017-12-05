@@ -4,7 +4,7 @@
 import gamebox
 
 cam = None
-Draw_Layers = {"Background": [], "game_objects": [], "player": [], "UI": []}
+Draw_Layers = {"Background": [], "Tiles": [], "game_objects": [], "player": [], "UI": []}
 UI_Elements = []
 Controls = []
 colors = ["red", "green", "yellow", "blue", "purple", "cyan", "brown"]
@@ -188,3 +188,8 @@ def drawing(camera):
             camera.draw(item)
     camera.display()
     return
+
+
+def background():
+    image = gamebox.from_image(300, 300, "Rock_Texture.png")
+    add_to_draw(image, "Background", center = True)

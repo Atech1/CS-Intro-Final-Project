@@ -43,16 +43,15 @@ class Level(object):
         self.tiles = []
         self.rand_start_tile = None
 
-    def level_gen(self, world_unit, deathlimit = 3, birthlimit = 4, chance = 0.47):
+    def level_gen(self, world_unit, deathlimit = 3, birthlimit = 4, chance = 0.57, steps = 3):
         """level gen calls all the methods to create a level using a cellular automata type generation"""
         self.world_unit = world_unit
         tiles = self.initialize_level(world_unit, chance)
-        for i in range(0, 3):
+        for i in range(0, steps):
             self.tiles = self.do_simulation_step(tiles, deathlimit, birthlimit)
-            self.tiles[0][0].walkable = True
-        self.tiles[0][1].walkable = True
-        self.tiles[1][0].walkable = True
-        self.rand_start_tile = self.tiles[0][0]
+            self.fill_borders()
+            # self.form_halls()  this is kind of buggy.
+        self.rand_start_tile = self.choose_random_tile()
 
     def find_tile(self, x, y):
         """finds a given tile for the coordinates passed in."""
@@ -105,11 +104,100 @@ class Level(object):
             new_map.append(new_column)
         return new_map
 
-    def flood_fill_check(self):
-        pass
+    def flood_fill_check(self, tile):
+        start_tile = tile
+        stack = [tile]
+        group = []
+        while stack:
+            current_tile = stack.pop()
+            group.append(current_tile)
+            candidates = [self.find_tile(current_tile.id_x + 1, current_tile.id_y),
+                          self.find_tile(current_tile.id_x - 1, current_tile.id_y),
+                          self.find_tile(current_tile.id_x, current_tile.id_y + 1),
+                          self.find_tile(current_tile.id_x, current_tile.id_y - 1)]
+            for candidate in candidates:
+                if candidate is not None and candidate.walkable and candidate not in group and candidate not in stack:
+                    stack.append(candidate)
+        return group
 
     def place_treasure(self):
         pass
+
+    def form_halls(self):
+        groups = []
+        for column in self.tiles:
+            for tile in column:
+                if tile.walkable:
+                    in_group = False
+                    for group in groups:
+                        if tile in group.tiles:
+                            in_group = True
+                            break
+                    if not in_group:
+                        room_group = RoomGroup(self.flood_fill_check(tile))
+                        groups.append(room_group)
+                    continue
+        print(len(groups))
+        if len(groups) > 3:
+            for i in range(0, len(groups) - 2):
+                self.connect_groups(groups[i], groups[i + 1])
+
+    def connect_groups(self, group1, group2):
+        for x in range(min(group1.center[0], group2.center[0]), max(group1.center[0], group2.center[0])):
+            for y in range(min(group1.center[1], group2.center[1]), max(group1.center[1], group2.center[1])):
+                tile = self.find_tile(x, y)
+                if tile is not None:
+                    tile.walkable = True
+
+    def choose_random_tile(self):
+        not_found = True
+        tile = None
+        while not_found:
+            x = random.randint(0, len(self.tiles))
+            y = random.randint(0, len(self.tiles[x]))
+            tile = self.find_tile(x, y)
+            if tile.walkable:
+                not_found = False
+        return tile
+
+    def fill_borders(self):
+        for column in self.tiles:
+            for tile in column:
+                if tile.id_x == 0:
+                    tile.walkable = False
+                if tile.id_y == 0:
+                    tile.walkable = False
+                if tile.id_x == self.width - 1:
+                    tile.walkable = False
+                if tile.id_y == self.height - 1:
+                    tile.walkable = False
+
+
+class RoomGroup(object):
+    """
+    """
+
+    def __init__(self, tiles):
+        """ Constructor for roomGroup """
+        self.tiles = tiles
+        self._center = None
+
+    @property
+    def center(self):
+        if self._center is not None:
+            return self._center
+        else:
+            return self.center_group()
+
+    def center_group(self):
+        x_range = []
+        y_range = []
+        for tile in self.tiles:
+            x_range.append(tile.id_x)
+            y_range.append(tile.id_y)
+        self._center = [max(x_range) - min(x_range), max(y_range) - min(y_range)]
+        return self._center
+
 
 
 class World(object):
@@ -130,7 +218,7 @@ class World(object):
             self.levels.append(level)
         self.current_level = self.levels.pop(0)
         return
-
+    
     def next_level(self):
         """deletes the level that just ran and goes to the next level"""
         if len(self.levels) > 0:
