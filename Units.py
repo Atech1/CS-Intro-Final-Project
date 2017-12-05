@@ -40,10 +40,8 @@ class Player(PlayableUnit):
         self.world_y += y
         x_pos = self.world_x // self.current_level.world_unit
         y_pos = self.world_y // self.current_level.world_unit
-        print(x_pos, y_pos, " x y  world // units")
         valid_tile = self.current_level.find_tile(x_pos, y_pos)
         if valid_tile is not None and valid_tile.walkable:
-            print(valid_tile.id_x, valid_tile.id_y, "tile")
             self.current_tile = valid_tile
             return True
         else:

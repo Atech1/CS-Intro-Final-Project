@@ -105,6 +105,12 @@ class Level(object):
             new_map.append(new_column)
         return new_map
 
+    def flood_fill_check(self):
+        pass
+
+    def place_treasure(self):
+        pass
+
 
 class World(object):
     """The World class holds the model for the world, which includes all of the levels and the player data, etc."""
