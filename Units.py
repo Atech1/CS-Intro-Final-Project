@@ -64,7 +64,7 @@ class Player(PlayableUnit):
             self.booty[treasure.name] += treasure.item
         else:
             self.booty[treasure.name] = treasure.item
-        print(type(treasure), type(treasure.control), "add treasure #68")
+        print(type(treasure), type(treasure.control), "   add treasure #68")
         if treasure.control is not None:
             treasure.depleted()
         print(self.booty)
