@@ -2,6 +2,10 @@
 # this was created Nov, 2017
 
 import random
+
+from Units import Treasure
+
+
 # this will be part of the model only
 class Tile(object):
     def __init__(self, x: int, y: int, unit: int, passable: bool = False, level = None):
@@ -14,6 +18,7 @@ class Tile(object):
         self.nearby = None
         self.level = level
         self.world_unit = unit
+        self.object = None
 
     def nearby_tiles(self):
         tiles = [self.level.find_tile(i, j) for i in range(self.id_x - 1, self.id_x + 2)
@@ -42,6 +47,7 @@ class Level(object):
         self.enemies = []  # gen from the number passed as parem enemies
         self.tiles = []
         self.rand_start_tile = None
+        self.treasure = None
 
     def level_gen(self, world_unit, deathlimit = 3, birthlimit = 4, chance = 0.57, steps = 3):
         """level gen calls all the methods to create a level using a cellular automata type generation"""
@@ -50,6 +56,7 @@ class Level(object):
         for i in range(0, steps):
             self.tiles = self.do_simulation_step(tiles, deathlimit, birthlimit)
             self.fill_borders()
+            self.treasure = self.place_treasure()
             # self.form_halls()  this is kind of buggy.
         self.rand_start_tile = self.choose_random_tile()
 
@@ -111,17 +118,23 @@ class Level(object):
         while stack:
             current_tile = stack.pop()
             group.append(current_tile)
-            candidates = [self.find_tile(current_tile.id_x + 1, current_tile.id_y),
-                          self.find_tile(current_tile.id_x - 1, current_tile.id_y),
-                          self.find_tile(current_tile.id_x, current_tile.id_y + 1),
-                          self.find_tile(current_tile.id_x, current_tile.id_y - 1)]
+            candidates = [] + current_tile.nearby_tiles()
             for candidate in candidates:
-                if candidate is not None and candidate.walkable and candidate not in group and candidate not in stack:
+                if candidate is not None and candidate.walkable and candidate not in group:
                     stack.append(candidate)
         return group
 
-    def place_treasure(self):
-        pass
+    def place_treasure(self, treasure_rarity = 4):
+        treasure_list = []
+        for column in self.tiles:
+            for tile in column:
+                if tile is not None and tile.walkable:
+                    num = tile.alive_neighbors()
+                    if num <= treasure_rarity: treasure_list.append(Treasure(tile, self, 1, "Gold"))
+        return treasure_list
+
+
+
 
     def form_halls(self):
         groups = []
@@ -153,10 +166,10 @@ class Level(object):
         not_found = True
         tile = None
         while not_found:
-            x = random.randint(0, len(self.tiles))
-            y = random.randint(0, len(self.tiles[x]))
+            x = random.randint(0, len(self.tiles) - 1)
+            y = random.randint(0, len(self.tiles[x]) - 1)
             tile = self.find_tile(x, y)
-            if tile.walkable:
+            if tile is not None and tile.walkable:
                 not_found = False
         return tile
 
@@ -218,7 +231,7 @@ class World(object):
             self.levels.append(level)
         self.current_level = self.levels.pop(0)
         return
-    
+
     def next_level(self):
         """deletes the level that just ran and goes to the next level"""
         if len(self.levels) > 0:

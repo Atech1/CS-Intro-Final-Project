@@ -6,7 +6,7 @@ import pygame
 import UI
 from Units import Player
 from World import World
-from gamebox import from_image
+from gamebox import from_image, load_sprite_sheet
 
 
 class CameraController(object):
@@ -127,10 +127,7 @@ class WorldController(object):
 
 class LevelController(object):
     def create_level(self):
-        #        for tile in self.level.all_tiles():
-        #           if not tile.walkable:
-        print("obstacle")
-        # tiling(self.level.tiles, 50, 50)
+        self.place_treasure()
         self.create_tiles()
 
     def __init__(self, level):
@@ -150,6 +147,28 @@ class LevelController(object):
                     box = from_image(tiles[i][j].world_x, tiles[i][j].world_y, "Rock_floor.png")
                     UI.add_to_draw(box, "Tiles", False)
 
+    def place_treasure(self):
+        for chest in self.level.treasure:
+            con = TreasureController(chest)
+            con.place()
+
+
+class TreasureController(object):
+    """Treasure Controller thing"""
+
+    def __init__(self, item):
+        self.treasure = item
+        self.treasure.control = self
+        self.images = load_sprite_sheet("chest_set.png", 2, 2)
+        self.Box = from_image(item.current_tile.world_x, item.current_tile.world_y, self.images[0])
+
+    def place(self):
+        UI.add_to_draw(self.Box, "game_objects", False)
+
+    def used(self):
+        UI.remove_from_draw(self.Box, "game_objects")
+        self.Box = from_image(self.treasure.current_tile.world_x, self.treasure.current_tile.world_y, self.images[1])
+        UI.add_to_draw(self.Box, "game_objects")
 
 def lerp(point1, point2, scalar):
     """linear interpolation"""
