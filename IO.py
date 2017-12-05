@@ -1,6 +1,8 @@
 # Tilden Winston (tw8rt) Alec Ross(asr3bj) Writes debug info, records high scores
 # Not functional yet. Based on code from class demonstration
 
+#This is a duplicate of file_writing.py
+
 import os
 
 def highscores(newscore):

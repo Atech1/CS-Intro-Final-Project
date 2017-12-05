@@ -2,12 +2,13 @@
 # referenced: https://stackoverflow.com/questions/37799078/how-to-append-data-to-text-file-in-python-2-7-11
 # https://wiki.python.org/moin/HowTo/Sorting
 
+import time
 
 ordering = 0
 
 def highscores(newscore):
-    topten = writescore(newscore)
-    returnscores()
+    writescore(newscore)
+    topten = returnscores()
 
 
 def writescore(newscore):
@@ -60,16 +61,17 @@ def writescore(newscore):
 def returnscores():
     infile = open("scores.txt", "r")
     scores_in_file = infile.read().split()
-    # print(scores_in_file)
+    print(scores_in_file)
     infile.close()
     empty = []
     for each in scores_in_file:
+        #print(type(each))
         empty.append(int(each))
     empty.sort(reverse=True)
     # print(empty)
     topten = []
     x = 0
-    while x < 10:
+    while x < 10 and x < len(empty):
         topten.append(empty[x])
         x = x + 1
 
@@ -79,19 +81,10 @@ def returnscores():
 
 
 def errorlog(location, note="none"):
-    try:
-        ordering += 1
-        print(ordering)
-        outfile = open("errorlog.txt", "a+")
-        outfile.write(str(ordering) + str(location) + str(note) + "\n")
-        outfile.close()
-
-    except:
-        ordering = 0
-        print(ordering)
-        outfile = open("errorlog.txt", "a+")
-        outfile.write(str(ordering) + str(location) + str(note) + "\n")
-        outfile.close()
+    ordering = time.time()
+    outfile = open("errorlog.txt", "a+")
+    outfile.write(str(ordering) + " " + str(location) + " " + str(note) + "\n")
+    outfile.close()
 
 # def plusone(number=0):
 #     return number+1
