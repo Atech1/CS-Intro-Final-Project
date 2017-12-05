@@ -67,10 +67,10 @@ class PlayerController(object):
         y_pos = 0
         if x != 0:
             x_pos = lerp(self.player.current_tile.world_x,
-                         self.player.current_tile.world_x + (abs(x) * self.world_unit), 00.25)
+                         self.player.current_tile.world_x + (abs(x) * self.world_unit), 00.5)
         if y != 0:
             y_pos = lerp(self.player.current_tile.world_y,
-                         self.player.current_tile.world_y + (abs(y) * self.world_unit), 0.25)
+                         self.player.current_tile.world_y + (abs(y) * self.world_unit), 00.5)
         if x < 0:
             x_pos = -x_pos
         if y < 0:
@@ -94,7 +94,7 @@ class WorldController(object):
     The World Controller controls all the world actions, level handling, player, passing, etc.
     """
 
-    def __init__(self, world = None, player = None, world_unit = 25):
+    def __init__(self, world = None, player = None, world_unit = 50):
         self.world_unit = world_unit
         if world is not None:
             self.world = world

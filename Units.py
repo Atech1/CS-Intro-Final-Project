@@ -29,8 +29,6 @@ class Player(PlayableUnit):
     def __init__(self, tile, stats, level, name = "fred"):
         PlayableUnit.__init__(self, tile, stats, level)
         self.name = name
-        self.dx = 0
-        self.dy = 0
         self.world_x = self.current_tile.world_x
         self.world_y = self.current_tile.world_y
 
@@ -48,3 +46,13 @@ class Player(PlayableUnit):
             self.world_x -= x
             self.world_y -= y
             return False
+
+
+class Enemy(PlayableUnit):
+    """This is the Enemy class"""
+
+    def __init__(self, tile, stats, level, name = "monster"):
+        """ Constructor for  """
+        PlayableUnit.__init__(self, tile, stats, level)
+        self.name = name
+        pass
