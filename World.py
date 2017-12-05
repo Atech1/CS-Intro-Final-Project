@@ -13,6 +13,7 @@ class Tile(object):
         self.world_y = (unit * self.id_y) + unit // 2
         self.nearby = None
         self.level = level
+        self.world_unit = unit
 
     def nearby_tiles(self):
         tiles = [self.level.find_tile(i, j) for i in range(self.id_x - 1, self.id_x + 2)
@@ -35,6 +36,7 @@ class Level(object):
     """this class holds all of the data and methods needed to handle the level model"""
     def __init__(self, x_size: int, y_size: int, enemies: int, treasure: int):
         """Constructor for the level and creates some stuff"""
+        self.world_unit = None
         self.width = x_size
         self.height = y_size
         self.enemies = []  # gen from the number passed as parem enemies
@@ -43,16 +45,19 @@ class Level(object):
 
     def level_gen(self, world_unit, deathlimit = 3, birthlimit = 4, chance = 0.47):
         """level gen calls all the methods to create a level using a cellular automata type generation"""
+        self.world_unit = world_unit
         tiles = self.initialize_level(world_unit, chance)
         for i in range(0, 3):
             self.tiles = self.do_simulation_step(tiles, deathlimit, birthlimit)
-        self.tiles[5][5].walkable = True
-        self.rand_start_tile = self.tiles[5][5]
+            self.tiles[0][0].walkable = True
+        self.tiles[0][1].walkable = True
+        self.tiles[1][0].walkable = True
+        self.rand_start_tile = self.tiles[0][0]
 
     def find_tile(self, x, y):
         """finds a given tile for the coordinates passed in."""
-        if (len(self.tiles) > x >= 0 and len(self.tiles[x]) > y >= 0) and self.tiles[x][y] is not None:
-            return self.tiles[x][y]
+        if (len(self.tiles) > x >= 0 and len(self.tiles[int(x)]) > y >= 0) and self.tiles[int(x)][int(y)] is not None:
+            return self.tiles[int(x)][int(y)]
         else:
             return None
 

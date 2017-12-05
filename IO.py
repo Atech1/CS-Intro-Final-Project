@@ -1,6 +1,8 @@
 # Tilden Winston (tw8rt) Alec Ross(asr3bj) Writes debug info, records high scores
 # Not functional yet. Based on code from class demonstration
 
+import os
+
 def highscores(newscore):
     writescore(newscore)
     returnscores()
@@ -27,7 +29,7 @@ def writescore(newscore):
         # Create file
         print(newscore)
 
-        outfile = open(scores.txt, "w")
+        outfile = open("scores.txt", "w")
 
         # write some data.  Each line of data written must terminate with a \n (newline) character.
         # Python needs this newline character for the file object methods readline() and readlines() to work.

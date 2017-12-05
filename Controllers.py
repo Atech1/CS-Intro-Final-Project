@@ -10,7 +10,9 @@ from gamebox import from_color
 
 
 class CameraController(object):
+    """this will control the camera and various objects that all need to change based on what the world does"""
     def __init__(self, cam = None, world = None):
+        """Constructor"""
         self.camera = cam
         if cam is None:
             self.camera = UI.Camera(600, 600, "white", controller = self)
@@ -20,6 +22,7 @@ class CameraController(object):
         self.world_unit = self.world.world_unit
 
     def controls(self, keys):
+        """this holds the proper controls, and will keep the camera bounded inside the level"""
         if pygame.K_UP in keys and self.camera.y > self.world_unit:
             self.move(0, -1)
         elif pygame.K_DOWN in keys and self.camera.y < self.world_unit * 29:
@@ -30,9 +33,11 @@ class CameraController(object):
             self.move(1, 0)
 
     def move(self, x, y):
+        """move function that will only move a full tile"""
         self.camera.move(x * self.world_unit, y * self.world_unit)
 
     def clear(self, color = None, image = None):
+        """clears the camera in the proper way"""
         if color is not None:
             self.camera.clear(color)
         else:
@@ -40,9 +45,13 @@ class CameraController(object):
 
 
 class PlayerController(object):
+    """player controller that will control player model and player on screen"""
     def __init__(self, player, screenObj = None, world_unit = None):
+        """Constructor"""
         self.world_unit = world_unit
         self.player = player
+        self.dy = 0
+        self.dx = 0
         if screenObj is not None:
             self.screen_obj = screenObj
         else:
@@ -53,13 +62,25 @@ class PlayerController(object):
             # TODO: fix the functionality of this to actually make some sense and work.
 
     def move(self, x, y):
-        print("called")
-        if self.player.move(x, y):
-            self.screen_obj.move(x * self.world_unit, y * self.world_unit)
-        return
-
-    def lerp(self, point1, point2, scalar):
-        return point1 + (point2 - point1) * scalar
+        x_pos = 0
+        y_pos = 0
+        if x != 0:
+            x_pos = lerp(self.player.current_tile.world_x,
+                         self.player.current_tile.world_x + (abs(x) * self.world_unit), 0.5)
+        if y != 0:
+            y_pos = lerp(self.player.current_tile.world_y,
+                         self.player.current_tile.world_y + (abs(y) * self.world_unit), 0.5)
+        if x < 0:
+            x_pos = -x_pos
+        if y < 0:
+            y_pos = -y_pos
+        print(self.player.world_x, self.player.world_y)
+        print(x_pos, y_pos)
+        if self.player.move(x_pos, y_pos):
+            print((int(x_pos), int(y_pos)))
+            self.screen_obj.move(int(x_pos), int(y_pos))
+        else:
+            print("issues")
 
     def controls(self, keys):
         if pygame.K_w in keys:
@@ -130,9 +151,21 @@ class LevelController(object):
                     UI.add_to_draw(box, "game_objects", False)
 
 
+def lerp(point1, point2, scalar):
+    """linear interpolation"""
+    print(point1, point2, (point2 - point1) * scalar)
+    return (point2 - point1) * scalar
 """
 to solve my problems with tiling, I need to probably have both a "tile order" type system I have now, 1, 2, 3, 4
  [0,0], [1,1] ,etc... and a tile width and tile height to use while positioning the tile so that it can easily be used.
  refer to Quill18 creates episode #2. ->  14:55.
  this will fix a lot of the uncleanliness. also add the tiling directly to LevelController for cleanliness. 
 """
+#
+#
+# listy1 = [0, -1, 1]
+# lisyt2 = [0, 1, -1]
+# maping = [0, 25, 50]
+#
+# val = lerp(maping[1], listy1[2] * maping[2], 0.5)/25
+# print(val)
