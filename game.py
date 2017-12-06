@@ -9,6 +9,8 @@ camera_controller = None
 button = None
 
 def main():
+    music = gamebox.load_sound("lostinstartsabdullah.wav")
+    musicplayer = music.play(-1)
     global camera_controller, button
     camera_controller = CameraController()
     button = UI.Button(300, 300,
@@ -21,8 +23,7 @@ def main():
     camera_controller.world.load()
     gamebox.timer_loop(15, play)
 
-    music = gamebox.load_sound("lostinstarsabdullah.wav")
-    musicplayer = music.play(-1)
+
 
     return
 
