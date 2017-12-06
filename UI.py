@@ -118,7 +118,8 @@ class Button(TextObject):
 
     def deactivate(self):
         self.remove_draw()
-        UI_Elements.remove(self)
+        if self in  UI_Elements:
+            UI_Elements.remove(self)
 
 
 class ScreenUnit(gamebox.SpriteBox):  # TODO: make this not centered on the camera to move indepentdently
