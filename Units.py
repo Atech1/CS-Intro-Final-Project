@@ -2,6 +2,8 @@
 # this was created Nov, 2017
 
 import random
+"""This holds all of the moveable parts of the game, etc."""
+
 
 class PlayableUnit(object):
     """PlayableUnit defines any unit that can move around the level."""
@@ -58,6 +60,8 @@ class Player(PlayableUnit):
         else:
             if type(self.current_tile.object) is Treasure:
                 self.add_treasure(self.current_tile.object)
+            elif type(self.current_tile.object) is Portal:
+                self.current_tile.object.next_level()
 
     def add_treasure(self, treasure):
         if treasure.name in self.booty.keys():
@@ -92,3 +96,14 @@ class Treasure(FloorObject):
     def depleted(self):
         self.item = 0
         self.control.used()
+
+
+class Portal(FloorObject):
+    """Portal to the next level"""
+    def __init__(self, tile, level, con = None):
+        FloorObject.__init__(self, tile, level)
+        self.control = con
+
+    def next_level(self):
+        if self.control is not None:
+            self.control.next_level()

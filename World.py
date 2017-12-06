@@ -3,10 +3,10 @@
 
 import random
 
-from Units import Treasure
+from Units import Treasure, Portal
+"""this file holds all of the fixed items in the model, and will create the "world" of the game""" 
 
 
-# this will be part of the model only
 class Tile(object):
     def __init__(self, x: int, y: int, unit: int, passable: bool = False, level = None):
         self.id_x = x
@@ -39,7 +39,11 @@ class Tile(object):
 
 class Level(object):
     """this class holds all of the data and methods needed to handle the level model"""
-    def __init__(self, x_size: int, y_size: int, enemies: int, treasure: int):
+    """I got the idea for the generation from
+     https://gamedevelopment.tutsplus.com/tutorials/generate-random-cave-levels-using-cellular-automata--gamedev-9664
+     -Alec
+     """
+    def __init__(self, x_size: int, y_size: int, enemies: int, world = None):
         """Constructor for the level and creates some stuff"""
         self.world_unit = None
         self.width = x_size
@@ -47,7 +51,9 @@ class Level(object):
         self.enemies = []  # gen from the number passed as parem enemies
         self.tiles = []
         self.rand_start_tile = None
-        self.treasure = None
+        self.treasure = None # this will be generated
+        self.world = world
+        self.portal_object = None # this will be some tile
 
     def level_gen(self, world_unit, deathlimit = 3, birthlimit = 4, chance = 0.57, steps = 3):
         """level gen calls all the methods to create a level using a cellular automata type generation"""
@@ -59,6 +65,7 @@ class Level(object):
             self.treasure = self.place_treasure()
             # self.form_halls()  this is kind of buggy.
         self.rand_start_tile = self.choose_random_tile()
+        self.portal_place()
 
     def find_tile(self, x, y):
         """finds a given tile for the coordinates passed in."""
@@ -111,7 +118,7 @@ class Level(object):
             new_map.append(new_column)
         return new_map
 
-    def flood_fill_check(self, tile):
+    def flood_fill_check(self, tile): 
         start_tile = tile
         stack = [tile]
         group = []
@@ -133,8 +140,10 @@ class Level(object):
                     if num <= treasure_rarity: treasure_list.append(Treasure(tile, self, 1, "Gold"))
         return treasure_list
 
-
-
+    def portal_place(self):
+        group = self.flood_fill_check(self.rand_start_tile)
+        tile = group[random.randint(0, len(group) - 1)]
+        self.portal_object = Portal(tile, self)
 
     def form_halls(self):
         groups = []
@@ -169,7 +178,7 @@ class Level(object):
             x = random.randint(0, len(self.tiles) - 1)
             y = random.randint(0, len(self.tiles[x]) - 1)
             tile = self.find_tile(x, y)
-            if tile is not None and tile.walkable:
+            if tile is not None and tile.walkable and tile.object is None:
                 not_found = False
         return tile
 
@@ -226,7 +235,7 @@ class World(object):
     def world_gen(self, num_of_levels: int, world_width: int = 30, world_height: int = 30):
         """Generates all of the levels for the world and all of that handling stuff"""
         for i in range(num_of_levels):
-            level = Level(world_width, world_height, 0, 0)
+            level = Level(world_width, world_height, 0, self)
             level.level_gen(self.world_unit)
             self.levels.append(level)
         self.current_level = self.levels.pop(0)

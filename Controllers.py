@@ -8,8 +8,11 @@ import pygame
 import UI
 from Units import Player
 from World import World
-from gamebox import from_image, load_sprite_sheet
-
+from gamebox import from_image, load_sprite_sheet, from_color
+"""
+This file holds the controllers that interface between the screen and the model allowing
+them to interact.
+"""
 
 class CameraController(object):
     """this will control the camera and various objects that all need to change based on what the world does"""
@@ -112,8 +115,8 @@ class WorldController(object):
 
     def load(self):
         if self.world.current_level is None:
-            self.world.world_gen(2)
-            self.current_level_controller = LevelController(self.world.current_level)
+            self.world.world_gen(3)
+            self.current_level_controller = LevelController(self.world.current_level, self)
         if self.player is None:
             playerobj = Player(self.world.current_level.rand_start_tile, 4,
                                self.current_level_controller.level, "George")
@@ -122,7 +125,11 @@ class WorldController(object):
 
     def next_level_load(self):
         if self.world.next_level():
-            self.current_level_controller = LevelController(self.world.current_level)
+            self.current_level_controller = LevelController(self.world.current_level, self)
+            playerobj = Player(self.world.current_level.rand_start_tile, 4,
+                               self.current_level_controller.level, "George")
+            self.player = PlayerController(playerobj, None, self.world_unit)
+            self.world.player = playerobj
         else:
             print("end game")
 
@@ -131,9 +138,11 @@ class LevelController(object):
     def create_level(self):
         self.place_treasure()
         self.create_tiles()
+        self.place_portal()
 
-    def __init__(self, level):
+    def __init__(self, level, world):
         self.level = level
+        self.worldCon = world
         self.create_level()
 
     def create_tiles(self):
@@ -154,6 +163,10 @@ class LevelController(object):
             con = TreasureController(chest)
             con.place()
 
+    def place_portal(self):
+        con = PortalController(self.level.portal_object, self.worldCon)
+        con.place()
+
 
 class TreasureController(object):
     """Treasure Controller thing"""
@@ -172,12 +185,23 @@ class TreasureController(object):
         self.Box = from_image(self.treasure.current_tile.world_x, self.treasure.current_tile.world_y, self.images[1])
         UI.add_to_draw(self.Box, "game_objects")
 
+class PortalController(object):
+    """controls the portal to the next level"""
+    def __init__(self, portal, world = None):
+        self.portal = portal
+        self.portal.control = self
+        self.graphic = None
+        self.box = from_color(portal.current_tile.world_x, portal.current_tile.world_y, "red", 25, 25)
+        self.world = world
+
+    def place(self):
+        UI.add_to_draw(self.box, "game_objects", False)
+
+    def next_level(self):
+        self.world.next_level_load()
+
+
 def lerp(point1, point2, scalar):
     """linear interpolation"""
     return (point2 - point1) * scalar
-"""
-to solve my problems with tiling, I need to probably have both a "tile order" type system I have now, 1, 2, 3, 4
- [0,0], [1,1] ,etc... and a tile width and tile height to use while positioning the tile so that it can easily be used.
- refer to Quill18 creates episode #2. ->  14:55.
- this will fix a lot of the uncleanliness. also add the tiling directly to LevelController for cleanliness. 
-"""
+
