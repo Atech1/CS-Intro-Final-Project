@@ -2,6 +2,7 @@
 # this was created Nov, 2017
 
 import random
+import file_writing
 """This holds all of the moveable parts of the game, etc."""
 
 
@@ -68,10 +69,18 @@ class Player(PlayableUnit):
             self.booty[treasure.name] += treasure.item
         else:
             self.booty[treasure.name] = treasure.item
-        print(type(treasure), type(treasure.control), "   add treasure #68")
+
+        try:
+            file_writing.errorlog(type(treasure), type(treasure.control))
+        except:
+            print("")
+
         if treasure.control is not None:
             treasure.depleted()
-        print(self.booty)
+        try:
+            file_writing.errorlog(self.booty)
+        except:
+            print("")
 
 
 class Enemy(PlayableUnit):
