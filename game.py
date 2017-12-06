@@ -1,21 +1,27 @@
 # Alexander Ross (asr3bj) and Tilden (tw8rt), program.py
 # this was created Nov, 2017
 
+
 import UI
 import gamebox
+import musicpicker
 from Controllers import CameraController
 
 camera_controller = None
 button = None
 
 def main():
-    music = gamebox.load_sound("lostinstartsabdullah.wav")
+    music = musicpicker.music()
     musicplayer = music.play(-1)
+
     global camera_controller, button
     camera_controller = CameraController()
-    button = UI.Button(300, 300,
-                       "|--Tilden and Alec's Roguelike--| \n |-----dungeon-----|"
-                       " \ntry the dungeon if you dare\n",
+    button = UI.Button(300, 250,
+                       "CLICK ANYWHERE TO START""\n"
+                       "|--Tilden and Alec's Roguelike--| \n |-----Dungeon Dive-----|"
+                       " \nTry the dungeon if you dare!\n""\n""Controls:\n""WASD to move Character\n"
+                       "Arrow keys to move screen\n""\n"
+                       "Alec Ross (asr3b)\n""Tilden Winston (tw8rt)\n",
                        "black", UI.text_descriptor(), None, splash_end)
     # gamebox.timer_loop(30, splash_screen)
     button.deactivate()

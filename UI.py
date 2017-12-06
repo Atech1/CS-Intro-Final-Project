@@ -102,9 +102,10 @@ class Button(TextObject):
         self.add_drawing()
 
     def On_Click(self, x, y):
-        if self.contains(x, y):
-            print("\n click \n")
-            self.click_call()
+        # if self.contains(x, y):
+        #     print("\n click \n")
+        #     self.click_call()
+        self.click_call()
         return
 
     def Hover(self):
