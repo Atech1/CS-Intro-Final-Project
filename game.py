@@ -1,16 +1,19 @@
 # Alexander Ross (asr3bj) and Tilden (tw8rt), program.py
 # this was created Nov, 2017
 
+
 import UI
 import gamebox
+import musicpicker
 from Controllers import CameraController
 
 camera_controller = None
 button = None
 
 def main():
-    music = gamebox.load_sound("lostinstartsabdullah.wav")
+    music = musicpicker.music()
     musicplayer = music.play(-1)
+
     global camera_controller, button
     camera_controller = CameraController()
     button = UI.Button(300, 300,
