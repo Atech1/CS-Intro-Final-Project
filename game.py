@@ -23,7 +23,7 @@ def main():
                        "Arrow keys to move screen\n""\n"
                        "Alec Ross (asr3b)\n""Tilden Winston (tw8rt)\n",
                        "black", UI.text_descriptor(), None, splash_end)
-    # gamebox.timer_loop(30, splash_screen)
+    gamebox.timer_loop(30, splash_screen)
     button.deactivate()
     UI.background()
     camera_controller.world.load()
@@ -44,7 +44,6 @@ def splash_screen(keys):
 
 def splash_end():
     global button
-    UI.clear_draw()
     gamebox.stop_loop()
     button.deactivate()
 

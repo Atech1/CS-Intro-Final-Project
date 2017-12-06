@@ -10,6 +10,16 @@ Controls = []
 colors = ["red", "green", "yellow", "blue", "purple", "cyan", "brown"]
 
 
+def text_descriptor(font = 'arial', text = "", size = 20, bold = False, italic = False):  # auto generated
+    instance_TextDescriptor = dict()
+    instance_TextDescriptor['font'] = font
+    instance_TextDescriptor['text'] = text
+    instance_TextDescriptor['size'] = size
+    instance_TextDescriptor['bold'] = bold
+    instance_TextDescriptor['italic'] = italic
+    return instance_TextDescriptor
+
+
 class Camera(gamebox.Camera):
     """this extends the gamebox.camera will some useful things that makes it better and easier to use"""
     def __init__(self, width, height, full_screen = False, children = [], controller = None):
@@ -56,15 +66,13 @@ class TextObject:
 
     def create_boxes(self, text, x, y, color, textDes):
         all_boxes = []
-        print(text.split("\n"))
         for i in range(len(text.split("\n")) - 1):
             line = text.split("\n")[i]
-            print(line, i)
             all_boxes.append(gamebox.from_text(x, y + 20 * i, line,
                                                textDes['font'], textDes['size'], color))
         return all_boxes
 
-    def __init__(self, text, x, y, color = "black", textDes = None, image = None):
+    def __init__(self, text, x, y, color = "black", textDes = text_descriptor(), image = None):
         self.boxes = list()
         self.text = text
         self.width = x
@@ -90,6 +98,23 @@ class TextObject:
     def remove_draw(self):
         for box in self.boxes:
             remove_from_draw(box, "UI", True)
+
+
+class Label():
+    """This is to make basic labels"""
+    def __init__(self, x, y, text, color = "black", textDes = text_descriptor()):
+        self.thing = gamebox.from_text(x, y, text, "arial", 15, "black")
+        self.x = x
+        self.y = y
+
+    def change_text(self, text_change):
+        self.remove_draw()
+        self.thing =  gamebox.from_text( "arial", 15, "black")
+    def add_draw(self):
+        add_to_draw(self.thing, "UI", True)
+
+    def remove_draw(self):
+        remove_from_draw(self.thing, "UI", True)
 
 
 class Button(TextObject):
@@ -133,16 +158,6 @@ class ScreenUnit(gamebox.SpriteBox):  # TODO: make this not centered on the came
             add_to_draw(self, "player")
         if controls is not None:
             add_control(controls)
-
-
-def text_descriptor(font = 'arial', text = "", size = 20, bold = False, italic = False):  # auto generated
-    instance_TextDescriptor = dict()
-    instance_TextDescriptor['font'] = font
-    instance_TextDescriptor['text'] = text
-    instance_TextDescriptor['size'] = size
-    instance_TextDescriptor['bold'] = bold
-    instance_TextDescriptor['italic'] = italic
-    return instance_TextDescriptor
 
 
 def add_control(control):

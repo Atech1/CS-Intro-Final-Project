@@ -35,7 +35,7 @@ class Player(PlayableUnit):
         self.name = name
         self.world_x = self.current_tile.world_x
         self.world_y = self.current_tile.world_y
-        self.booty = {}
+        self.booty = {"Gold": 0}
 
     def move(self, x, y):
         """this will move the model tile the player is standing in"""

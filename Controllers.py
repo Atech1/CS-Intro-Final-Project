@@ -25,9 +25,13 @@ class CameraController(object):
         if world is None:
             self.world = WorldController()
         self.world_unit = self.world.world_unit
+        self.label1 = UI.Label(300, 300, " \nplayer gold:\n")
 
     def controls(self, keys):
         """this holds the proper controls, and will keep the camera bounded inside the level"""
+        if self.world.player is not None:
+            print("works")
+            self.label1.change_text("\nplayer gold: {}\n".format(self.world.player.player.booty["Gold"]))
         if pygame.K_UP in keys and self.camera.y > self.world_unit:
             self.move(0, -1)
         elif pygame.K_DOWN in keys and self.camera.y < self.world_unit * 29:
@@ -159,7 +163,7 @@ class LevelController(object):
     def create_level(self):
         self.place_treasure()
         self.create_tiles()
-        self.place_portal()
+        # self.place_portal()
 
     def __init__(self, level, world):
         self.level = level
