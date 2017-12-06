@@ -16,9 +16,11 @@ def main():
 
     global camera_controller, button
     camera_controller = CameraController()
-    button = UI.Button(300, 300,
-                       "|--Tilden and Alec's Roguelike--| \n |-----dungeon-----|"
-                       " \ntry the dungeon if you dare\n",
+    button = UI.Button(300, 250,
+                       "|--Tilden and Alec's Roguelike--| \n |-----Dungeon Dive-----|"
+                       " \nTry the dungeon if you dare!\n""\n""Controls:\n""WASD to move Character\n"
+                       "Arrow keys to move screen\n""\n"
+                       "Alec Ross (asr3b)\n""Tilden Winston (tw8rt)\n",
                        "black", UI.text_descriptor(), None, splash_end)
     gamebox.timer_loop(30, splash_screen)
     button.deactivate()
