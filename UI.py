@@ -125,6 +125,7 @@ class Button(TextObject):
 class ScreenUnit(gamebox.SpriteBox):  # TODO: make this not centered on the camera to move indepentdently
     def __init__(self, x, y, image, width, height, is_centered = False, controls = None):
         gamebox.SpriteBox.__init__(self, x, y, image, "black", width, height)
+        self.scale_by(2)
         if is_centered is True:
             add_to_draw(self, "player", True)
         else:

@@ -17,7 +17,7 @@ def main():
                        "|--Tilden and Alec's Roguelike--| \n |-----dungeon-----|"
                        " \ntry the dungeon if you dare\n",
                        "black", UI.text_descriptor(), None, splash_end)
-    gamebox.timer_loop(30, splash_screen)
+    # gamebox.timer_loop(30, splash_screen)
     button.deactivate()
     UI.background()
     camera_controller.world.load()

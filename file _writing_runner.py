@@ -13,4 +13,3 @@ print(score)
 file_writing.highscores(int(score))
 
 file_writing.errorlog("here")
-# IO.newscore(score)

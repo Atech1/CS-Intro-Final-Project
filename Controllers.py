@@ -54,13 +54,16 @@ class PlayerController(object):
     def __init__(self, player, screenObj = None, world_unit = None):
         """Constructor"""
         self.world_unit = world_unit
+        self.images = load_sprite_sheet("Witchcraft.png", 1, 22)
+        self.image_num = 0
         self.player = player
         self.dy = 0
         self.dx = 0
+        self.direction = 1
         if screenObj is not None:
             self.screen_obj = screenObj
         else:
-            self.screen_obj = UI.ScreenUnit(player.current_tile.world_x, player.current_tile.world_y, None, 15, 15,
+            self.screen_obj = UI.ScreenUnit(player.current_tile.world_x, player.current_tile.world_y, self.images[0], 15, 15,
                                             False, self.controls)
             from UI import cam
             cam.center_on(self.screen_obj)
@@ -68,19 +71,25 @@ class PlayerController(object):
 
     def move(self, x, y):
         """this will move and lerp the player correctly."""
+        direction = 1
         x_pos = 0
         y_pos = 0
         if x != 0:
             x_pos = lerp(self.player.current_tile.world_x,
-                         self.player.current_tile.world_x + (abs(x) * self.world_unit), 00.5)
+                         self.player.current_tile.world_x + (abs(x) * self.world_unit), 00.25)
         if y != 0:
             y_pos = lerp(self.player.current_tile.world_y,
-                         self.player.current_tile.world_y + (abs(y) * self.world_unit), 00.5)
+                         self.player.current_tile.world_y + (abs(y) * self.world_unit), 00.25)
         if x < 0:
             x_pos = -x_pos
+            direction = -1
+        if x > 0:
+            direction = 1
         if y < 0:
             y_pos = -y_pos
         if self.player.move(x_pos, y_pos):
+            self.screen_obj.image = self.images[self.imaging()]
+            self.image_direction(direction)
             self.screen_obj.move(int(x_pos), int(y_pos))
 
     def controls(self, keys):
@@ -92,6 +101,18 @@ class PlayerController(object):
             self.move(-1, 0)
         elif pygame.K_d in keys:
             self.move(1, 0)
+
+    def imaging(self):
+        self.image_num += 1
+        if self.image_num % 5  > 1:
+            self.image_num = self.image_num % 5
+        return self.image_num
+
+    def image_direction(self, direct):
+        if self.direction != direct:
+            self.screen_obj.flip()
+            self.direction = direct
+
 
 
 class WorldController(object):
