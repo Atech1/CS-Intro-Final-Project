@@ -109,7 +109,9 @@ class Label():
 
     def change_text(self, text_change):
         self.remove_draw()
-        self.thing =  gamebox.from_text( "arial", 15, "black")
+        self.thing = gamebox.from_text(self.x, self.y, text_change, "arial", 15, "black")
+        self.add_draw()
+
     def add_draw(self):
         add_to_draw(self.thing, "UI", True)
 

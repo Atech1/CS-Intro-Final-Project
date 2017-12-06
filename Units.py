@@ -2,7 +2,6 @@
 # this was created Nov, 2017
 
 import random
-import file_writing
 """This holds all of the moveable parts of the game, etc."""
 
 
@@ -31,12 +30,13 @@ class FloorObject(object):
 
 
 class Player(PlayableUnit):
-    def __init__(self, tile, stats, level, name = "fred"):
+    def __init__(self, tile, stats, level, name = "fred", con = None):
         PlayableUnit.__init__(self, tile, stats, level)
         self.name = name
         self.world_x = self.current_tile.world_x
         self.world_y = self.current_tile.world_y
         self.booty = {"Gold": 0}
+        self.con = con
 
     def move(self, x, y):
         """this will move the model tile the player is standing in"""
@@ -69,18 +69,10 @@ class Player(PlayableUnit):
             self.booty[treasure.name] += treasure.item
         else:
             self.booty[treasure.name] = treasure.item
-
-        try:
-            file_writing.errorlog(type(treasure), type(treasure.control))
-        except:
-            print("")
-
         if treasure.control is not None:
             treasure.depleted()
-        try:
-            file_writing.errorlog(self.booty)
-        except:
-            print("")
+        self.con.treasure_change()
+
 
 
 class Enemy(PlayableUnit):
