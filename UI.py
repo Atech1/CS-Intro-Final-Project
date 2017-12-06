@@ -108,7 +108,7 @@ class Button(TextObject):
         return
 
     def Hover(self):
-        print("hover")
+        """this maybe useful in the future"""
         return
 
     def Mouse_Check(self, x, y):
