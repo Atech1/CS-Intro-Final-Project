@@ -79,7 +79,6 @@ def returnscores():
     return topten
 
 
-
 def errorlog(location, note="none"):
     ordering = time.time()
     outfile = open("errorlog.txt", "a+")

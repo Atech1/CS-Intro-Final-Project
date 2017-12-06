@@ -1,6 +1,8 @@
 # Alexander Ross (asr3bj) and Tilden (tw8rt), Controllers.py
 # this was created Nov, 2017
 
+
+
 import pygame
 
 import UI
@@ -55,7 +57,7 @@ class PlayerController(object):
         if screenObj is not None:
             self.screen_obj = screenObj
         else:
-            self.screen_obj = UI.ScreenUnit(player.current_tile.world_x, player.current_tile.world_y, None, 15, 15,
+            self.screen_obj = UI.ScreenUnit(player.current_tile.world_x, player.current_tile.world_y, "character.png",
                                             False, self.controls)
             from UI import cam
             cam.center_on(self.screen_obj)

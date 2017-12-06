@@ -20,6 +20,10 @@ def main():
     UI.background()
     camera_controller.world.load()
     gamebox.timer_loop(15, play)
+
+    music = gamebox.load_sound("lostinstarsabdullah.wav")
+    musicplayer = music.play(-1)
+
     return
 
 
