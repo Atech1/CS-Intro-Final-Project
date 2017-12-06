@@ -39,6 +39,6 @@ def music():
     elif songnumber == 13:
         return gamebox.load_sound("music/14.wav")
     else:
-        return gamebox.load_sound("lostinstartsabdullah.wav")
+        return gamebox.load_sound("music/lostinstartsabdullah.wav")
 
 

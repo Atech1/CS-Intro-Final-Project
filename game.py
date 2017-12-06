@@ -17,6 +17,7 @@ def main():
     global camera_controller, button
     camera_controller = CameraController()
     button = UI.Button(300, 250,
+                       "CLICK ANYWHERE TO START""\n"
                        "|--Tilden and Alec's Roguelike--| \n |-----Dungeon Dive-----|"
                        " \nTry the dungeon if you dare!\n""\n""Controls:\n""WASD to move Character\n"
                        "Arrow keys to move screen\n""\n"
