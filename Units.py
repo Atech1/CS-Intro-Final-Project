@@ -30,12 +30,13 @@ class FloorObject(object):
 
 
 class Player(PlayableUnit):
-    def __init__(self, tile, stats, level, name = "fred"):
+    def __init__(self, tile, stats, level, name = "fred", con = None):
         PlayableUnit.__init__(self, tile, stats, level)
         self.name = name
         self.world_x = self.current_tile.world_x
         self.world_y = self.current_tile.world_y
         self.booty = {"Gold": 0}
+        self.con = con
 
     def move(self, x, y):
         """this will move the model tile the player is standing in"""
@@ -68,10 +69,10 @@ class Player(PlayableUnit):
             self.booty[treasure.name] += treasure.item
         else:
             self.booty[treasure.name] = treasure.item
-        print(type(treasure), type(treasure.control), "   add treasure #68")
         if treasure.control is not None:
             treasure.depleted()
-        print(self.booty)
+        self.con.treasure_change()
+
 
 
 class Enemy(PlayableUnit):

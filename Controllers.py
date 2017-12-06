@@ -25,13 +25,9 @@ class CameraController(object):
         if world is None:
             self.world = WorldController()
         self.world_unit = self.world.world_unit
-        self.label1 = UI.Label(300, 300, " \nplayer gold:\n")
 
     def controls(self, keys):
         """this holds the proper controls, and will keep the camera bounded inside the level"""
-        if self.world.player is not None:
-            print("works")
-            self.label1.change_text("\nplayer gold: {}\n".format(self.world.player.player.booty["Gold"]))
         if pygame.K_UP in keys and self.camera.y > self.world_unit:
             self.move(0, -1)
         elif pygame.K_DOWN in keys and self.camera.y < self.world_unit * 29:
@@ -61,9 +57,11 @@ class PlayerController(object):
         self.images = load_sprite_sheet("Witchcraft.png", 1, 22)
         self.image_num = 0
         self.player = player
+        self.player.con = self
         self.dy = 0
         self.dx = 0
         self.direction = 1
+        self.label1 = UI.Label(300, 300, " player gold:{}".format(self.player.booty["Gold"]))
         if screenObj is not None:
             self.screen_obj = screenObj
         else:
@@ -117,6 +115,9 @@ class PlayerController(object):
             self.screen_obj.flip()
             self.direction = direct
 
+    def treasure_change(self):
+        self.label1.change_text(" player gold:{}".format(self.player.booty["Gold"]))
+        self.label1.add_draw()
 
 
 class WorldController(object):
